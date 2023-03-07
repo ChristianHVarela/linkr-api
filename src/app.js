@@ -1,7 +1,7 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
-import { postRouter } from './routes/post.route.js'
+import { postRouter } from './routers/post.route.js'
 import hashtagsRouter from "./routers/hashtags.js"
 
 dotenv.config()
