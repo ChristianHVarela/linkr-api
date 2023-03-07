@@ -1,4 +1,4 @@
-import { insertPost } from "../repositories/post.repository";
+import { insertPost } from "../repositories/post.repository.js";
 
 export const createPost = (req, res) => {
     const { link, description } = req.body
@@ -8,4 +8,5 @@ export const createPost = (req, res) => {
         console.log(error);
         return res.status(500).send(error)
     }
+    return res.status(201).send()
 }
