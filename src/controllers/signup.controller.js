@@ -11,7 +11,7 @@ export async function signup(req, res) {
         res.sendStatus(201);
     } catch (error)
     {
-        if (error.code == 23505) return res.status(409).send("email já cadastrado!");
+        if (error.code == 23505) return res.status(409).send("email already exists!");
         console.log(error);
         res.sendStatus(500);
     }
