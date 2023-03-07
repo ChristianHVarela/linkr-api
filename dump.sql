@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.2
--- Dumped by pg_dump version 15.2
+-- Dumped from database version 13.9 (Ubuntu 13.9-1.pgdg20.04+1)
+-- Dumped by pg_dump version 13.9 (Ubuntu 13.9-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,23 +21,20 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: links; Type: TABLE; Schema: public; Owner: -
+-- Name: hashtags; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.links (
+CREATE TABLE public.hashtags (
     id integer NOT NULL,
-    url text NOT NULL,
-    "shortUrl" text NOT NULL,
-    "visitCount" bigint DEFAULT '0'::bigint NOT NULL,
-    "createdAt" date DEFAULT '2023-03-06'::date NOT NULL
+    name text NOT NULL
 );
 
 
 --
--- Name: links_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: hashtags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.links_id_seq
+CREATE SEQUENCE public.hashtags_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -47,10 +44,104 @@ CREATE SEQUENCE public.links_id_seq
 
 
 --
--- Name: links_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: hashtags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.links_id_seq OWNED BY public.links.id;
+ALTER SEQUENCE public.hashtags_id_seq OWNED BY public.hashtags.id;
+
+
+--
+-- Name: posts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.posts (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    link text NOT NULL,
+    description text NOT NULL
+);
+
+
+--
+-- Name: posts_hashtags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.posts_hashtags (
+    id integer NOT NULL,
+    post_id integer NOT NULL,
+    hashtag_id integer NOT NULL
+);
+
+
+--
+-- Name: posts_hashtags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.posts_hashtags_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: posts_hashtags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.posts_hashtags_id_seq OWNED BY public.posts_hashtags.id;
+
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.posts_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
+
+
+--
+-- Name: posts_likes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.posts_likes (
+    id integer NOT NULL,
+    post_id integer NOT NULL,
+    user_id integer NOT NULL
+);
+
+
+--
+-- Name: posts_likes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.posts_likes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: posts_likes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.posts_likes_id_seq OWNED BY public.posts_likes.id;
 
 
 --
@@ -59,9 +150,8 @@ ALTER SEQUENCE public.links_id_seq OWNED BY public.links.id;
 
 CREATE TABLE public.sessions (
     id integer NOT NULL,
-    "userId" integer NOT NULL,
-    token text NOT NULL,
-    "createdAt" date DEFAULT '2023-03-06'::date NOT NULL
+    user_id integer NOT NULL,
+    token character varying(36) NOT NULL
 );
 
 
@@ -86,47 +176,15 @@ ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
 
 
 --
--- Name: userLinks; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."userLinks" (
-    id integer NOT NULL,
-    "userId" integer NOT NULL,
-    "linkId" integer NOT NULL,
-    "createdAt" date DEFAULT '2023-03-06'::date NOT NULL
-);
-
-
---
--- Name: userLinks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public."userLinks_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: userLinks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."userLinks_id_seq" OWNED BY public."userLinks".id;
-
-
---
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.users (
     id integer NOT NULL,
-    email text NOT NULL,
-    password text NOT NULL,
-    name character varying(50) NOT NULL,
-    "createdAt" date DEFAULT '2023-03-06'::date NOT NULL
+    name character varying(30) NOT NULL,
+    password character varying(60) NOT NULL,
+    email character varying(60) NOT NULL,
+    image text NOT NULL
 );
 
 
@@ -151,10 +209,31 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: links id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: hashtags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.links ALTER COLUMN id SET DEFAULT nextval('public.links_id_seq'::regclass);
+ALTER TABLE ONLY public.hashtags ALTER COLUMN id SET DEFAULT nextval('public.hashtags_id_seq'::regclass);
+
+
+--
+-- Name: posts id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN id SET DEFAULT nextval('public.posts_id_seq'::regclass);
+
+
+--
+-- Name: posts_hashtags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_hashtags ALTER COLUMN id SET DEFAULT nextval('public.posts_hashtags_id_seq'::regclass);
+
+
+--
+-- Name: posts_likes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_likes ALTER COLUMN id SET DEFAULT nextval('public.posts_likes_id_seq'::regclass);
 
 
 --
@@ -165,13 +244,6 @@ ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.ses
 
 
 --
--- Name: userLinks id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."userLinks" ALTER COLUMN id SET DEFAULT nextval('public."userLinks_id_seq"'::regclass);
-
-
---
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -179,7 +251,25 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- Data for Name: links; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: hashtags; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- Data for Name: posts_hashtags; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- Data for Name: posts_likes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
@@ -191,22 +281,37 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- Data for Name: userLinks; Type: TABLE DATA; Schema: public; Owner: -
---
-
-
-
---
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- Name: links_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: hashtags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.links_id_seq', 1, false);
+SELECT pg_catalog.setval('public.hashtags_id_seq', 1, false);
+
+
+--
+-- Name: posts_hashtags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.posts_hashtags_id_seq', 1, false);
+
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.posts_id_seq', 1, false);
+
+
+--
+-- Name: posts_likes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.posts_likes_id_seq', 1, false);
 
 
 --
@@ -217,13 +322,6 @@ SELECT pg_catalog.setval('public.sessions_id_seq', 1, false);
 
 
 --
--- Name: userLinks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."userLinks_id_seq"', 1, false);
-
-
---
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -231,43 +329,43 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, false);
 
 
 --
--- Name: links links_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: hashtags hashtags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.links
-    ADD CONSTRAINT links_pk PRIMARY KEY (id);
+ALTER TABLE ONLY public.hashtags
+    ADD CONSTRAINT hashtags_pkey PRIMARY KEY (id);
 
 
 --
--- Name: sessions sessions_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: posts_hashtags posts_hashtags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_hashtags
+    ADD CONSTRAINT posts_hashtags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: posts_likes posts_likes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_likes
+    ADD CONSTRAINT posts_likes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_pk PRIMARY KEY (id);
-
-
---
--- Name: sessions sessions_token_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_token_key UNIQUE (token);
-
-
---
--- Name: sessions sessions_userId_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT "sessions_userId_key" UNIQUE ("userId");
-
-
---
--- Name: userLinks userLinks_pk; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."userLinks"
-    ADD CONSTRAINT "userLinks_pk" PRIMARY KEY (id);
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
 
 
 --
@@ -279,35 +377,59 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users users_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pk PRIMARY KEY (id);
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 --
--- Name: sessions sessions_fk0; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: posts_hashtags posts_hashtags_hashtag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_hashtags
+    ADD CONSTRAINT posts_hashtags_hashtag_id_fkey FOREIGN KEY (hashtag_id) REFERENCES public.hashtags(id);
+
+
+--
+-- Name: posts_hashtags posts_hashtags_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_hashtags
+    ADD CONSTRAINT posts_hashtags_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id);
+
+
+--
+-- Name: posts_likes posts_likes_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_likes
+    ADD CONSTRAINT posts_likes_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id);
+
+
+--
+-- Name: posts_likes posts_likes_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts_likes
+    ADD CONSTRAINT posts_likes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: posts posts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_fk0 FOREIGN KEY ("userId") REFERENCES public.users(id);
-
-
---
--- Name: userLinks userLinks_fk0; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."userLinks"
-    ADD CONSTRAINT "userLinks_fk0" FOREIGN KEY ("userId") REFERENCES public.users(id);
-
-
---
--- Name: userLinks userLinks_fk1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."userLinks"
-    ADD CONSTRAINT "userLinks_fk1" FOREIGN KEY ("linkId") REFERENCES public.links(id);
+    ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
