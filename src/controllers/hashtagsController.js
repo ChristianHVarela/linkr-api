@@ -7,7 +7,8 @@ async function getTrending(_, res) {
             FROM hashtags h 
             JOIN posts_hashtags ph ON h.id = ph.hashtag_id
             GROUP BY h.id, h.name
-            ORDER BY num_posts DESC;`
+            ORDER BY num_posts DESC
+            LIMIT 10;`
 		);
 		res.send(rows);
 	} catch (err) {
