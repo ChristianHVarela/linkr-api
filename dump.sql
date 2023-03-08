@@ -59,7 +59,7 @@ CREATE TABLE public.posts (
     user_id integer NOT NULL,
     link text NOT NULL,
     description text NOT NULL,
-    created_at timestamp without time zone
+    created_at timestamp without time zone DEFAULT now()
 );
 
 
