@@ -1,9 +1,9 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
-import signupRouter from "./routes/signup.routes.js"
-import { postRouter } from './routers/post.route.js'
-import hashtagsRouter from "./routers/hashtags.js"
+import signupRouter from "./routers/signup.routes.js"
+import { postRouter } from './routers/post.routes.js'
+import hashtagsRouter from "./routers/hashtags.routes.js"
 
 dotenv.config()
 const server = express()
