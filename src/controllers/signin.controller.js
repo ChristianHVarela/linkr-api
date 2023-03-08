@@ -14,7 +14,7 @@ export async function signin(req, res) {
 
         const token = jwt.sign({ email: user.rows[0].email }, process.env.JWT_KEY);
 
-        res.status(200).send({ token, name: user.rows[0].name, image: user.rows[0].image });
+        res.status(200).send({ token, image: user.rows[0].image });
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
