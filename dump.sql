@@ -58,7 +58,8 @@ CREATE TABLE public.posts (
     id integer NOT NULL,
     user_id integer NOT NULL,
     link text NOT NULL,
-    description text NOT NULL
+    description text NOT NULL,
+    created_at timestamp without time zone DEFAULT now()
 );
 
 
@@ -145,37 +146,6 @@ ALTER SEQUENCE public.posts_likes_id_seq OWNED BY public.posts_likes.id;
 
 
 --
--- Name: sessions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.sessions (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    token character varying(36) NOT NULL
-);
-
-
---
--- Name: sessions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.sessions_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: sessions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
-
-
---
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -237,13 +207,6 @@ ALTER TABLE ONLY public.posts_likes ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: sessions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.sessions_id_seq'::regclass);
-
-
---
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -260,6 +223,15 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.posts VALUES (1, 1, 'https://www.youtube.com/watch?v=HiBrj8asp3Y', 'Pensando mais a longo prazo, o consenso sobre a necessidade de qualificação representa uma abertura para a melhoria das direções preferenciais no sentido do progresso.', NULL);
+INSERT INTO public.posts VALUES (2, 1, 'https://www.youtube.com/watch?v=HiBrj8asp3Y', 'Pensando mais a longo prazo, o consenso sobre a necessidade de qualificação representa uma abertura para a melhoria das direções preferenciais no sentido do progresso.', NULL);
+INSERT INTO public.posts VALUES (3, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend', 'DNOIQWNDOIWQNDIOQWNIDOQWD', NULL);
+INSERT INTO public.posts VALUES (4, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend', 'DNOIQWNDOIWQNDIOQWNIDOQWD', NULL);
+INSERT INTO public.posts VALUES (5, 1, 'https://www.figma.com/file/EzaDbiWc5y0qb8idmXQt0V/linkr-T4?node-id=7%3A37&t=yQu1vtN3uFkQYYQF-0', 'Podemos já vislumbrar o modo pelo qual a contínua expansão de nossa atividade desafia a capacidade de equalização dos modos de operação convencionais.
+', NULL);
+INSERT INTO public.posts VALUES (6, 1, 'https://trello.com/b/Pl8Td7NT/linkr', 'Evidentemente, o consenso sobre a necessidade de qualificação obstaculiza a apreciação da importância das novas proposições.', NULL);
+INSERT INTO public.posts VALUES (7, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend/pulls', 'É importante questionar o quanto a revolução dos costumes não pode mais se dissociar do remanejamento dos quadros funcionais.
+', NULL);
 
 
 --
@@ -275,15 +247,10 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: -
---
-
-
-
---
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.users VALUES (1, 'driven', 'driven', 'driven@driven.com', 'https://static.poder360.com.br/2021/08/Lula-Boxe-2-868x644-1-e1629756322652.png');
 
 
 --
@@ -304,7 +271,7 @@ SELECT pg_catalog.setval('public.posts_hashtags_id_seq', 1, false);
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.posts_id_seq', 1, false);
+SELECT pg_catalog.setval('public.posts_id_seq', 7, true);
 
 
 --
@@ -312,13 +279,6 @@ SELECT pg_catalog.setval('public.posts_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.posts_likes_id_seq', 1, false);
-
-
---
--- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.sessions_id_seq', 1, false);
 
 
 --
@@ -358,14 +318,6 @@ ALTER TABLE ONLY public.posts_likes
 
 ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
-
-
---
--- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
 
 
 --
@@ -422,14 +374,6 @@ ALTER TABLE ONLY public.posts_likes
 
 ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
--- Name: sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
