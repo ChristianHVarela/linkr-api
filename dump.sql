@@ -58,7 +58,8 @@ CREATE TABLE public.posts (
     id integer NOT NULL,
     user_id integer NOT NULL,
     link text NOT NULL,
-    description text NOT NULL
+    description text NOT NULL,
+    created_at timestamp without time zone
 );
 
 
@@ -222,15 +223,15 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.posts VALUES (1, 1, 'https://www.youtube.com/watch?v=HiBrj8asp3Y', 'Pensando mais a longo prazo, o consenso sobre a necessidade de qualificação representa uma abertura para a melhoria das direções preferenciais no sentido do progresso.');
-INSERT INTO public.posts VALUES (2, 1, 'https://www.youtube.com/watch?v=HiBrj8asp3Y', 'Pensando mais a longo prazo, o consenso sobre a necessidade de qualificação representa uma abertura para a melhoria das direções preferenciais no sentido do progresso.');
-INSERT INTO public.posts VALUES (3, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend', 'DNOIQWNDOIWQNDIOQWNIDOQWD');
-INSERT INTO public.posts VALUES (4, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend', 'DNOIQWNDOIWQNDIOQWNIDOQWD');
+INSERT INTO public.posts VALUES (1, 1, 'https://www.youtube.com/watch?v=HiBrj8asp3Y', 'Pensando mais a longo prazo, o consenso sobre a necessidade de qualificação representa uma abertura para a melhoria das direções preferenciais no sentido do progresso.', NULL);
+INSERT INTO public.posts VALUES (2, 1, 'https://www.youtube.com/watch?v=HiBrj8asp3Y', 'Pensando mais a longo prazo, o consenso sobre a necessidade de qualificação representa uma abertura para a melhoria das direções preferenciais no sentido do progresso.', NULL);
+INSERT INTO public.posts VALUES (3, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend', 'DNOIQWNDOIWQNDIOQWNIDOQWD', NULL);
+INSERT INTO public.posts VALUES (4, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend', 'DNOIQWNDOIWQNDIOQWNIDOQWD', NULL);
 INSERT INTO public.posts VALUES (5, 1, 'https://www.figma.com/file/EzaDbiWc5y0qb8idmXQt0V/linkr-T4?node-id=7%3A37&t=yQu1vtN3uFkQYYQF-0', 'Podemos já vislumbrar o modo pelo qual a contínua expansão de nossa atividade desafia a capacidade de equalização dos modos de operação convencionais.
-');
-INSERT INTO public.posts VALUES (6, 1, 'https://trello.com/b/Pl8Td7NT/linkr', 'Evidentemente, o consenso sobre a necessidade de qualificação obstaculiza a apreciação da importância das novas proposições.');
+', NULL);
+INSERT INTO public.posts VALUES (6, 1, 'https://trello.com/b/Pl8Td7NT/linkr', 'Evidentemente, o consenso sobre a necessidade de qualificação obstaculiza a apreciação da importância das novas proposições.', NULL);
 INSERT INTO public.posts VALUES (7, 1, 'https://github.com/ChristianHVarela/projeto18-linkr-backend/pulls', 'É importante questionar o quanto a revolução dos costumes não pode mais se dissociar do remanejamento dos quadros funcionais.
-');
+', NULL);
 
 
 --
