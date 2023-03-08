@@ -1,12 +1,27 @@
-import { insertPost } from "../repositories/post.repository.js";
+import { getPostsOrderByCreatedAtDesc, insertPost } from "../repositories/post.repository.js";
 
-export const createPost = (req, res) => {
+export const createPost = async (req, res) => {
     const { link, description } = req.body
     try {
-        insertPost(1, link, description)
+        await insertPost(1, link, description)
     } catch (error) {
         console.log(error);
         return res.status(500).send(error)
     }
     return res.status(201).send()
+}
+
+export const getPosts = async (req, res) => {
+    let posts = []
+    try {
+        const postsResult = await getPostsOrderByCreatedAtDesc()
+        console.log(postsResult);
+        if (postsResult.rowCount > 0){
+            posts = [...postsResult.rows]
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send()
+    }
+    return res.send(posts)
 }
