@@ -183,6 +183,8 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 --
 
 ALTER TABLE ONLY public.hashtags ALTER COLUMN id SET DEFAULT nextval('public.hashtags_id_seq'::regclass);
+ALTER TABLE ONLY public.hashtags ADD CONSTRAINT unique_name UNIQUE (name);
+
 
 
 --
