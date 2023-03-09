@@ -1,4 +1,5 @@
-import { deletePostById, findPostById, getPostsOrderByCreatedAtDesc, insertPost } from "../repositories/post.repository.js";
+import { addHashtag, deleteHashtags } from "../repositories/hashtags.repository.js";
+import { deletePostById, getPostsOrderByCreatedAtDesc, insertPost, updatePostById } from "../repositories/post.repository.js";
 
 export const createPost = async (req, res) => {
     const { link, description } = req.body
@@ -29,14 +30,35 @@ export const getPosts = async (req, res) => {
 export const deletePost = async (req, res) =>{
     const { id } = req.params;
     try {
-        const { rows:post } = await findPostById(id)
-        if (post.length === 0) return res.sendStatus(404)
-        const postUser = post[0].user_id
-        const userId = res.locals.user.id
-        if (postUser !== userId) return res.sendStatus(401)
         await deletePostById(id)
         res.sendStatus(204)
     } catch (error) {
+        console.log(error);
+        return res.status(500).send()
+    }
+}
+
+function extractHashtags(str) {
+    const regex = /#([\wÀ-ú]+)/gm;
+    let matches = str.match(regex);
+    if (matches) {
+      return matches.map(match => match.slice(1));
+    }
+    return [];
+  }
+
+export const editPost = async (req, res) =>{
+    const { id } = req.params;
+    const { description } = req.body;
+    const hashtags = extractHashtags(description);
+    try{
+        await deleteHashtags(id);
+        hashtags.forEach(async (hashtag) => {
+            await addHashtag(hashtag, id);
+        });
+        await updatePostById(id, description);
+        return res.status(200).send();
+    } catch(error){
         console.log(error);
         return res.status(500).send()
     }

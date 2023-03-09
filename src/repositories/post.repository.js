@@ -25,3 +25,7 @@ export const deletePostById = async (postId) => {
         throw new Error(`Erro ao excluir post com ID ${postId}: ${e.message}`);
       }
 }
+
+export const updatePostById = (postId, description) => {
+    return db.query('UPDATE posts SET description = $1 WHERE id = $2', [description, postId])
+}
