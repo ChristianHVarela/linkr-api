@@ -12,11 +12,11 @@ export const createPost = async (req, res) => {
     return res.status(201).send()
 }
 
-export const getPosts = async (req, res) => {
+export const getPosts = async (_, res) => {
     let posts = []
+    const userId = res.locals.user.id
     try {
-        const postsResult = await getPostsOrderByCreatedAtDesc()
-        console.log(postsResult);
+        const postsResult = await getPostsOrderByCreatedAtDesc(userId)
         if (postsResult.rowCount > 0){
             posts = [...postsResult.rows]
         }
