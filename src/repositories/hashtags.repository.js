@@ -12,8 +12,7 @@ function trendingRepository() {
 }
 
 function getHashtagRepository(hashtag) {
-	return db.query(
-		`
+	return db.query(`
         SELECT p.id, p.text, p.link, u.name, u.image, COUNT(*) AS num_likes
         FROM posts p 
         JOIN posts_hashtags ph ON p.id = ph.post_id
