@@ -1,15 +1,27 @@
-import { db } from "../config/database.connection.js";
-import { insertPost } from "../repositories/post.repository.js";
+import { getPostsOrderByCreatedAtDesc, insertPost } from "../repositories/post.repository.js";
 
-export async function createPost(req, res) {
-  const { link, description } = req.body;
-  try {
+export const createPost = async (req, res) => {
+    const { link, description } = req.body
+    try {
+        await insertPost(1, link, description)
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error)
+    }
+    return res.status(201).send()
+}
 
-    const ok = await insertPost(25, link, description);
-    return res.status(203).send(ok.rows);
-
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send(error);
-  }
+export const getPosts = async (req, res) => {
+    let posts = []
+    try {
+        const postsResult = await getPostsOrderByCreatedAtDesc()
+        console.log(postsResult);
+        if (postsResult.rowCount > 0){
+            posts = [...postsResult.rows]
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send()
+    }
+    return res.send(posts)
 }
