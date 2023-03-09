@@ -1,4 +1,4 @@
-import { findPostById } from "../repositories/post.repository"
+import { findPostById } from "../repositories/post.repository.js"
 
 export const authorizePost = async (req, res, next) => {
     const { id } = req.params;
