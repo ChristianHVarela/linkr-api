@@ -13,5 +13,5 @@ server.use(express.json())
 server.use([postRouter, hashtagsRouter, signupRouter])
 
 server.listen(process.env.PORT || 5000, () => {
-    console.log("server is fun");
+    console.log(`server is fun on PORT ${process.env.PORT}`);
 })
