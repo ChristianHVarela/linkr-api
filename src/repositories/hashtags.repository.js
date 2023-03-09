@@ -12,9 +12,8 @@ function trendingRepository() {
 }
 
 function getHashtagRepository(hashtag) {
-	return db.query(
-		`
-        SELECT p.id, p.description, p.link, u.name, u.image, COALESCE(COUNT(pl.post_id),0) AS num_likes
+	return db.query(`
+        SELECT p.id, p.description, p.link, u.name as user_name, u.image as image_profile, COALESCE(COUNT(pl.post_id),0) AS num_likes
         FROM posts p 
         JOIN posts_hashtags ph ON p.id = ph.post_id
         JOIN hashtags h ON h.id = ph.hashtag_id
@@ -22,7 +21,7 @@ function getHashtagRepository(hashtag) {
         LEFT JOIN posts_likes pl ON p.id = pl.post_id
         WHERE h.name = $1
         GROUP BY p.id, p.description, p.link, u.name, u.image
-        ORDER BY p.id DESC;
+        ORDER BY p.created_at DESC;
         `,[hashtag]);
 }
 
