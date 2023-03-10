@@ -3,7 +3,7 @@ import { db } from "../config/database.connection.js";
 function getLikesByHashtag(hashtag, userId) {
 	return db.query(
 		`
-    SELECT pl.post_id AS id,
+    SELECT pl.post_id AS post_id,
        json_agg(json_build_object('id', u.id, 'name', u.name)) AS likes,
        EXISTS (
            SELECT 1
