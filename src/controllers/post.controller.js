@@ -94,8 +94,8 @@ export const likePost = async (req, res) => {
     const user = res.locals.user;
 
     try {
-        await insertLike(id, user.id);
-        res.sendStatus(201);
+        const data = await insertLike(id, user.id);
+        res.status(201).send(data.rows[0]);
     } catch (error) {
         console.log(error);
         return res.status(500).send();
@@ -107,8 +107,8 @@ export const dislikePost = async (req, res) => {
     const user = res.locals.user;
 
     try {
-        await deleteLike(id, user.id);
-        res.sendStatus(204);
+        const data = await deleteLike(id, user.id);
+        res.status(202).send(data.rows[0]);
     } catch (error) {
         console.log(error);
         return res.status(500).send();

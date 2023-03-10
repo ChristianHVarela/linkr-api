@@ -49,9 +49,35 @@ export const updatePostById = (postId, description) => {
 }
 
 export const insertLike = async (postId, userId) => {
-    return db.query(`INSERT INTO posts_likes (post_id, user_id) VALUES ($1, $2)`, [postId, userId]);
+	await db.query(`INSERT INTO posts_likes (post_id, user_id) VALUES ($1, $2)`, [postId, userId]);
+	return await db.query(
+		`SELECT pl.post_id AS post_id,
+		json_agg(json_build_object('id', u.id, 'name', u.name)) AS likes,
+		EXISTS (
+		  SELECT 1
+		  FROM json_populate_recordset(null::users, json_agg(json_build_object('id', u.id, 'name', u.name))) AS user_obj
+		  WHERE user_obj.id = $1
+		) AS liked_by_me
+		FROM posts_likes pl
+		JOIN users u ON pl.user_id = u.id
+		where pl.post_id = $2
+		GROUP BY pl.post_id;`, [userId, postId]
+	)
 }
 
 export const deleteLike = async (postId, userId) => {
-    return db.query('DELETE FROM posts_likes WHERE post_id = $1 AND user_id = $2', [postId, userId]);
+	await db.query('DELETE FROM posts_likes WHERE post_id = $1 AND user_id = $2', [postId, userId]);
+	return await db.query(
+		`SELECT pl.post_id AS post_id,
+		json_agg(json_build_object('id', u.id, 'name', u.name)) AS likes,
+		EXISTS (
+		  SELECT 1
+		  FROM json_populate_recordset(null::users, json_agg(json_build_object('id', u.id, 'name', u.name))) AS user_obj
+		  WHERE user_obj.id = $1
+		) AS liked_by_me
+		FROM posts_likes pl
+		JOIN users u ON pl.user_id = u.id
+		where pl.post_id = $2
+		GROUP BY pl.post_id;`, [userId, postId]
+	)
 }
