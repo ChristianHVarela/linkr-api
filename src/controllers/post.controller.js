@@ -1,5 +1,5 @@
 import { addHashtag, deleteHashtags } from "../repositories/hashtags.repository.js";
-import { deletePostById, getPostsOrderByCreatedAtDesc, insertPost, updatePostById } from "../repositories/post.repository.js";
+import { deleteLike, deletePostById, getPostsOrderByCreatedAtDesc, insertLike, insertPost, updatePostById } from "../repositories/post.repository.js";
 import urlMetadata from 'url-metadata'
 import { insertMetada } from "../repositories/metadata.repository.js";
 
@@ -65,5 +65,31 @@ export const editPost = async (req, res) =>{
     } catch(error){
         console.log(error);
         return res.status(500).send()
+    }
+}
+
+export const likePost = async (req, res) => {
+    const { id } = req.params;
+    const user = res.locals.user;
+
+    try {
+        await insertLike(id, user.id);
+        res.sendStatus(201);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
+    }
+}
+
+export const dislikePost = async (req, res) => {
+    const { id } = req.params;
+    const user = res.locals.user;
+
+    try {
+        await deleteLike(id, user.id);
+        res.sendStatus(204);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
     }
 }

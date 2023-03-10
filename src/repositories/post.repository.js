@@ -30,3 +30,11 @@ export const deletePostById = async (postId) => {
 export const updatePostById = (postId, description) => {
     return db.query('UPDATE posts SET description = $1 WHERE id = $2', [description, postId])
 }
+
+export const insertLike = async (postId, userId) => {
+    return db.query(`INSERT INTO posts_likes (post_id, user_id) VALUES ($1, $2)`, [postId, userId]);
+}
+
+export const deleteLike = async (postId, userId) => {
+    return db.query('DELETE FROM posts_likes WHERE post_id = $1 AND user_id = $2', [postId, userId]);
+}
