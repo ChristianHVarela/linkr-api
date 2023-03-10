@@ -1,4 +1,6 @@
+import { getLikesByUser } from "../repositories/likes.repository.js";
 import { getUserData, getUserPosts, searchUsers } from "../repositories/users.repository.js";
+import { buildBody } from "./post.controller.js";
 
 export async function getUser(req, res) {
   const { id } = req.params;
@@ -6,10 +8,10 @@ export async function getUser(req, res) {
   try {
     const userData = await getUserData(id)
     const userPosts = await getUserPosts(id)
+    const { rows:likes } = await getLikesByUser(id, res.locals.user.id)
+    const body = buildBody(userPosts.rows, likes)
 
-    const userPage = [[...userData.rows], [...userPosts.rows]]
-
-    console.log(userPage)
+    const userPage = [[...userData.rows], [...body]]
 
     return res.send(userPage).status(200);
   } catch (error) {
