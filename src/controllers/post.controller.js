@@ -5,9 +5,13 @@ import { insertMetada } from "../repositories/metadata.repository.js";
 
 export const createPost = async (req, res) => {
     const { link, description } = req.body
+    const hashtags = extractHashtags(description)
     try {
         const user = res.locals.user
         const post = await insertPost(user.id, link, description)
+        hashtags.forEach(async (hashtag) => {
+            await addHashtag(hashtag, post.rows[0].id)
+        })
         const metadata = await urlMetadata(link)
         await insertMetada(metadata.title, metadata.description, metadata.image, post.rows[0].id)
     } catch (error) {
