@@ -1,10 +1,15 @@
 import { addHashtag, deleteHashtags } from "../repositories/hashtags.repository.js";
 import { deletePostById, getPostsOrderByCreatedAtDesc, insertPost, updatePostById } from "../repositories/post.repository.js";
+import urlMetadata from 'url-metadata'
+import { insertMetada } from "../repositories/metadata.repository.js";
 
 export const createPost = async (req, res) => {
     const { link, description } = req.body
     try {
-        await insertPost(1, link, description)
+        const user = res.locals.user
+        const post = await insertPost(user.id, link, description)
+        const metadata = await urlMetadata(link)
+        await insertMetada(metadata.title, metadata.description, metadata.image, post.rows[0].id)
     } catch (error) {
         console.log(error);
         return res.status(500).send(error)
@@ -16,7 +21,6 @@ export const getPosts = async (req, res) => {
     let posts = []
     try {
         const postsResult = await getPostsOrderByCreatedAtDesc()
-        console.log(postsResult);
         if (postsResult.rowCount > 0){
             posts = [...postsResult.rows]
         }

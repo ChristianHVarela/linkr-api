@@ -9,7 +9,7 @@ import { postSchema } from "../schemas/post.shema.js";
 
 export const postRouter = Router()
 
-postRouter.post('/posts', validateSchema(postSchema), createPost)
-postRouter.get('/timeline', getPosts)
+postRouter.post('/posts', authMiddleware, validateSchema(postSchema), createPost)
+postRouter.get('/timeline', authMiddleware, getPosts)
 postRouter.delete('/posts/:id', authMiddleware, authorizePost, deletePost)	
 postRouter.put('/posts/:id', validateSchema(editSchema), authMiddleware, authorizePost, editPost)
