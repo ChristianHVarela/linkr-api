@@ -4,42 +4,17 @@ export function getUserData(id) {
     return db.query(`SELECT id, name, image FROM users WHERE id = $1`, [id])
 }
 
+// break
+
 export function getUserPosts(id) {
   return db.query(
-    `SELECT 
-    posts.user_id,
-    users.name,
-    users.image,
-    posts.id AS post_id,
-    posts.link,
-    posts.description,
-    posts.created_at,
-    (
-        SELECT json_agg(
-            json_build_object(
-                'hashtag_id', hashtags.id,
-                'name', hashtags.name
-            )
-        ) 
-        FROM posts_hashtags 
-        JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id 
-        WHERE posts_hashtags.post_id = posts.id
-    ) AS hashtags,
-    (
-        SELECT json_agg(
-            json_build_object(
-                'user_id', posts_likes.user_id,
-                'name', users.name
-            )
-        ) 
-        FROM posts_likes 
-        JOIN users ON posts_likes.user_id = users.id 
-        WHERE posts_likes.post_id = posts.id
-    ) AS likes
-FROM users 
-JOIN posts ON users.id = posts.user_id 
-WHERE users.id = $1
-ORDER BY posts.id
+    `SELECT p.*, u.name AS user_name, u.image AS image_profile, 
+    pm.title AS title_metadata, pm.description AS description_metadata, pm.image_url AS image_metadata, u.id = $1 AS author_match
+    FROM posts p 
+    JOIN users u ON u.id = p.user_id 
+    JOIN posts_metadata pm ON pm.post_id = p.id
+    WHERE p.user_id = $1
+    ORDER BY p.created_at DESC
       `,
     [id]
   );

@@ -1,6 +1,6 @@
 import { addHashtag, deleteHashtags } from "../repositories/hashtags.repository.js";
 import { deletePostById, getPostsOrderByCreatedAtDesc, insertPost, updatePostById } from "../repositories/post.repository.js";
-import urlMetadata from 'url-metadata'
+import urlMetadata from 'url-metadata' 
 import { insertMetada } from "../repositories/metadata.repository.js";
 
 export const createPost = async (req, res) => {
