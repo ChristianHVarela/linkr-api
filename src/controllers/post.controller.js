@@ -2,6 +2,7 @@ import { addHashtag, deleteHashtags } from "../repositories/hashtags.repository.
 import { deletePostById, getPostsOrderByCreatedAtDesc, insertPost, updatePostById } from "../repositories/post.repository.js";
 import urlMetadata from 'url-metadata'
 import { insertMetada } from "../repositories/metadata.repository.js";
+import { getLikes } from "../repositories/likes.repository.js";
 
 export const createPost = async (req, res) => {
     const { link, description } = req.body
@@ -23,18 +24,36 @@ export const createPost = async (req, res) => {
 
 export const getPosts = async (_, res) => {
     let posts = []
+    let body = []
     const userId = res.locals.user.id
     try {
         const postsResult = await getPostsOrderByCreatedAtDesc(userId)
-
+        const { rows:likes } = await getLikes(userId)
         if (postsResult.rowCount > 0){
             posts = [...postsResult.rows]
+            body = buildBody(posts, likes)
         }
     } catch (error) {
         console.log(error);
         return res.status(500).send()
     }
-    return res.send(posts)
+    return res.send(body);
+}
+
+export const buildBody = (post, likes) =>{
+    const likesMap = new Map();
+    likes.forEach((like) => likesMap.set(like.id, likes));
+    const body = [];
+    post.forEach((post) => {
+    let like;
+    try{
+        like = likesMap.get(post.id)[0];
+    } catch(e){
+        like = { likes: [], liked_by_me:false }
+    }
+    body.push({ ...post, ...like });
+    });
+    return body;
 }
 
 export const deletePost = async (req, res) =>{
