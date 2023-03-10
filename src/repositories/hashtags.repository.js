@@ -14,15 +14,17 @@ function trendingRepository() {
 function getHashtagRepository(hashtag, userId) {
 	return db.query(`
         SELECT p.id, p.description, p.link, u.name as user_name, u.image as image_profile, 
-		COALESCE(COUNT(pl.post_id),0) AS num_likes, u.id = $2 AS author_match, p.created_at
+		COALESCE(COUNT(pl.post_id),0) AS num_likes, u.id = $2 AS author_match, p.created_at,
+		pm.title AS title_metadata, pm.description AS description_metadata, pm.image_url AS image_metadata
         FROM posts p 
         JOIN posts_hashtags ph ON p.id = ph.post_id
         JOIN hashtags h ON h.id = ph.hashtag_id
         JOIN users u ON u.id = p.user_id
+		JOIN posts_metadata pm ON pm.post_id = p.id
         LEFT JOIN posts_likes pl ON p.id = pl.post_id
         WHERE h.name = $1
-        GROUP BY p.id, u.id, p.description, p.link, u.name, u.image
-        ORDER BY p.created_at DESC;
+        GROUP BY p.id, u.id, p.description, p.link, u.name, u.image, pm.title, pm.description, pm.image_url
+        ORDER BY p.created_at DESC LIMIT 20;
         `,
 		[hashtag, userId]
 	);
