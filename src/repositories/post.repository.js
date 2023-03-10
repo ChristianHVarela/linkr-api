@@ -29,6 +29,9 @@ export const deletePostById = async (postId) => {
 		await db.query("DELETE FROM posts_hashtags WHERE post_id = $1", [
 			postId,
 		]);
+		await db.query("DELETE FROM posts_metadata WHERE post_id = $1", [
+			postId,
+		]);
 		await db.query("DELETE FROM posts WHERE id = $1", [postId]);
 		await db.query("COMMIT");
 		console.log(`Post com ID ${postId} excluído com sucesso!`);
