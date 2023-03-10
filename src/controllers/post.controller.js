@@ -43,18 +43,11 @@ export const getPosts = async (_, res) => {
 
 export const buildBody = (post, likes) =>{
     const likesMap = new Map();
-    likes.forEach((like) => likesMap.set(like.id, likes));
+    likes.forEach((like) => likesMap.set(like.post_id, { likes: like.likes, liked_by_me: like.liked_by_me }));
     const body = [];
     post.forEach((p) => {
-        let like;
-        try
-        {
-            console.log(likesMap.get(p.post_id)[0]);
-        like = likesMap.get(p.post_id)[0];
-    } catch(e){
-        like = { likes: [], liked_by_me:false }
-    }
-    body.push({ ...p, ...like });
+        const like = likesMap.get(p.id) || { likes: [], liked_by_me:false };
+        body.push({ ...p, ...like });
     });
     return body;
 }
