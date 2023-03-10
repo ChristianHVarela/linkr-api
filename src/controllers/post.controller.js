@@ -4,7 +4,7 @@ import { deletePostById, getPostsOrderByCreatedAtDesc, insertPost, updatePostByI
 export const createPost = async (req, res) => {
     const { link, description } = req.body
     try {
-        await insertPost(1, link, description)
+        await insertPost(51, link, description)
     } catch (error) {
         console.log(error);
         return res.status(500).send(error)
