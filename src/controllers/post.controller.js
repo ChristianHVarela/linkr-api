@@ -1,6 +1,6 @@
 import { addHashtag, deleteHashtags } from "../repositories/hashtags.repository.js";
-import { deletePostById, getPostsOrderByCreatedAtDesc, insertPost, updatePostById } from "../repositories/post.repository.js";
-import urlMetadata from 'url-metadata' 
+import { deleteLike, deletePostById, getPostsOrderByCreatedAtDesc, insertLike, insertPost, updatePostById } from "../repositories/post.repository.js";
+import urlMetadata from 'url-metadata';
 import { insertMetada } from "../repositories/metadata.repository.js";
 import { getLikes } from "../repositories/likes.repository.js";
 
@@ -28,8 +28,9 @@ export const getPosts = async (_, res) => {
     const userId = res.locals.user.id
     try {
         const postsResult = await getPostsOrderByCreatedAtDesc(userId)
-        const { rows:likes } = await getLikes(userId)
-        if (postsResult.rowCount > 0){
+        const { rows: likes } = await getLikes(userId)
+        if (postsResult.rowCount > 0)
+        {
             posts = [...postsResult.rows]
             body = buildBody(posts, likes)
         }
@@ -42,16 +43,11 @@ export const getPosts = async (_, res) => {
 
 export const buildBody = (post, likes) =>{
     const likesMap = new Map();
-    likes.forEach((like) => likesMap.set(like.id, likes));
+    likes.forEach((like) => likesMap.set(like.post_id, { likes: like.likes, liked_by_me: like.liked_by_me }));
     const body = [];
-    post.forEach((post) => {
-    let like;
-    try{
-        like = likesMap.get(post.id)[0];
-    } catch(e){
-        like = { likes: [], liked_by_me:false }
-    }
-    body.push({ ...post, ...like });
+    post.forEach((p) => {
+        const like = likesMap.get(p.id) || { likes: [], liked_by_me:false };
+        body.push({ ...p, ...like });
     });
     return body;
 }
@@ -90,5 +86,31 @@ export const editPost = async (req, res) =>{
     } catch(error){
         console.log(error);
         return res.status(500).send()
+    }
+}
+
+export const likePost = async (req, res) => {
+    const { id } = req.params;
+    const user = res.locals.user;
+
+    try {
+        await insertLike(id, user.id);
+        res.sendStatus(201);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
+    }
+}
+
+export const dislikePost = async (req, res) => {
+    const { id } = req.params;
+    const user = res.locals.user;
+
+    try {
+        await deleteLike(id, user.id);
+        res.sendStatus(204);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
     }
 }

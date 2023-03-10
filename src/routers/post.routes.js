@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createPost, deletePost, editPost, getPosts } from "../controllers/post.controller.js";
+import { createPost, deletePost, dislikePost, editPost, getPosts, likePost } from "../controllers/post.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { authorizePost } from "../middlewares/post.middleware.js";
 import { validateSchema } from "../middlewares/schema.validator.js";
@@ -12,5 +12,7 @@ export const postRouter = Router()
 
 postRouter.post('/posts', authMiddleware, validateSchema(postSchema), createPost)
 postRouter.get('/timeline', authMiddleware, getPosts)
-postRouter.delete('/posts/:id', authMiddleware, authorizePost, deletePost)	
+postRouter.delete('/posts/:id', authMiddleware, authorizePost, deletePost)
 postRouter.put('/posts/:id', validateSchema(editSchema), authMiddleware, authorizePost, editPost)
+postRouter.get('/posts/likes/:id', authMiddleware, likePost);
+postRouter.delete('/posts/likes/:id', authMiddleware, dislikePost);
