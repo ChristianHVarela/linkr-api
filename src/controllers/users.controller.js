@@ -4,14 +4,16 @@ import { buildBody } from "./post.controller.js";
 
 export async function getUser(req, res) {
   const { id } = req.params;
+  const user_id = res.locals.user.id
 
   try {
-    const userData = await getUserData(id)
+    const itsYou = user_id === Number(id)
+    const userData = await getUserData(id, user_id)
     const userPosts = await getUserPosts(id)
-    const { rows:likes } = await getLikesByUser(id, res.locals.user.id)
+    const { rows:likes } = await getLikesByUser(id, user_id)
     const body = buildBody(userPosts.rows, likes)
 
-    const userPage = [[...userData.rows], [...body]]
+    const userPage = [[{...userData.rows[0], itsYou}], [...body]]
 
     return res.send(userPage).status(200);
   } catch (error) {
