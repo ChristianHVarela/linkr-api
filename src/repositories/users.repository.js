@@ -1,7 +1,7 @@
 import { db } from "../config/database.connection.js";
 
-export function getUserData(id) {
-    return db.query(`SELECT id, name, image FROM users WHERE id = $1`, [id])
+export function getUserData(id, user_id) {
+    return db.query(`SELECT id, name, image, EXISTS(SELECT 1 FROM followers f WHERE f.user_id = $2 AND f.following_id = $1) AS follow FROM users WHERE id = $1`, [id, user_id])
 }
 
 // break
@@ -33,3 +33,4 @@ export function searchUsers(searchQuery) {
     [searchQuery]
   );
 }
+
