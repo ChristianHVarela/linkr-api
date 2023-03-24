@@ -22,12 +22,14 @@ export const createPost = async (req, res) => {
     return res.status(201).send()
 }
 
-export const getPosts = async (_, res) => {
+export const getPosts = async (req, res) => {
     let posts = []
     let body = []
     const userId = res.locals.user.id
+    const query = req.query;
     try {
-        const postsResult = await getPostsOrderByCreatedAtDesc(userId)
+        const page = query.page || 1;
+        const postsResult = await getPostsOrderByCreatedAtDesc(userId,page)
         const { rows: likes } = await getLikes(userId)
         if (postsResult.rowCount > 0)
         {
