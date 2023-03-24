@@ -11,7 +11,8 @@ function trendingRepository() {
         `);
 }
 
-function getHashtagRepository(hashtag, userId) {
+function getHashtagRepository(hashtag, userId, page) {
+	const offset = (page - 1) * 10;
 	return db.query(`
         SELECT p.id, p.description, p.link, u.name as user_name, u.image as image_profile, 
 		COALESCE(COUNT(pl.post_id),0) AS num_likes, u.id = $2 AS author_match, p.created_at,
@@ -24,9 +25,9 @@ function getHashtagRepository(hashtag, userId) {
         LEFT JOIN posts_likes pl ON p.id = pl.post_id
         WHERE h.name = $1
         GROUP BY p.id, u.id, p.description, p.link, u.name, u.image, pm.title, pm.description, pm.image_url
-        ORDER BY p.created_at DESC LIMIT 20;
+        ORDER BY p.created_at DESC LIMIT 10 OFFSET $3;
         `,
-		[hashtag, userId]
+		[hashtag, userId, offset]
 	);
 }
 
