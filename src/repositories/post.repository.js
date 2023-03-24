@@ -4,7 +4,8 @@ export const insertPost = (user_id, link, description) => {
 	return db.query('INSERT INTO posts (user_id, link, description) VALUES ($1, $2, $3) RETURNING id', [user_id, link, description])
 };
 
-export const getPostsOrderByCreatedAtDesc = (id) => {
+export const getPostsOrderByCreatedAtDesc = (id,page) => {
+	const offset = (page - 1) * 10;
 	return db.query(`
     SELECT p.*, u.name AS user_name, u.image AS image_profile, COALESCE(COUNT(pl.post_id),0) AS num_likes,
     pm.title AS title_metadata, pm.description AS description_metadata, pm.image_url AS image_metadata, u.id = $1 AS author_match
@@ -13,8 +14,8 @@ export const getPostsOrderByCreatedAtDesc = (id) => {
     JOIN posts_metadata pm ON pm.post_id = p.id
 	LEFT JOIN posts_likes pl ON p.id = pl.post_id
 	GROUP BY p.id, u.id, p.description, p.link, u.name, u.image, pm.title, pm.description, pm.image_url
-    ORDER BY p.created_at DESC LIMIT 20
-    `,[id]);
+    ORDER BY p.created_at DESC LIMIT 10 OFFSET $2
+    `,[id,offset]);
 };
 
 
