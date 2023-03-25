@@ -17,9 +17,12 @@ async function getTrending(_, res) {
 
 async function getHashtag(req, res) {
 	const userId = res.locals.user.id;
+	const query = req.query;
 	try {
+		console.log(req.query);
+		const page = query.page || 1;
 		const { hashtag } = req.params;
-		const { rows:posts } = await getHashtagRepository(hashtag, userId);
+		const { rows:posts } = await getHashtagRepository(hashtag, userId, page);
 		const { rows:likes } = await getLikesByHashtag(hashtag,userId);
 		const body = buildBody(posts, likes)
 		console.log(posts);

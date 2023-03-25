@@ -21,7 +21,8 @@ function getLikesByHashtag(hashtag, userId) {
 	);
 }
 
-function getLikesByUser(userId, mineId) {
+function getLikesByUser(userId, mineId, page) {
+  const offset = (page - 1) * 10;
 	return db.query(
 		`
     SELECT pl.post_id AS post_id,
@@ -35,9 +36,10 @@ function getLikesByUser(userId, mineId) {
     JOIN users u ON pl.user_id = u.id
     JOIN posts p ON pl.post_id = p.id
     WHERE p.user_id = $2
-    GROUP BY pl.post_id;
+    GROUP BY pl.post_id
+    LIMIT 10 OFFSET $3;
     `,
-		[mineId, userId]
+		[mineId, userId, offset]
 	);
 }
 
