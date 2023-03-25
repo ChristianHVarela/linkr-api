@@ -23,3 +23,11 @@ export function findHavingFollower(searchQuery){
       `, searchQuery
     );
   }
+
+  export function countFollowers(searchQuery){
+    return db.query(
+      `
+        SELECT COUNT(*) FROM followers WHERE user_id = $1
+      `, searchQuery
+    );
+  }

@@ -6,17 +6,20 @@ export const insertPost = (user_id, link, description) => {
 
 export const getPostsOrderByCreatedAtDesc = (id,page) => {
 	const offset = (page - 1) * 10;
-	return db.query(`
-    SELECT p.*, u.name AS user_name, u.image AS image_profile, COALESCE(COUNT(DISTINCT pl.id)) AS num_likes, COALESCE(COUNT(DISTINCT c.id)) AS num_comments,
-    pm.title AS title_metadata, pm.description AS description_metadata, pm.image_url AS image_metadata, u.id = $1 AS author_match
-    FROM posts p
-    JOIN users u ON u.id = p.user_id
-    JOIN posts_metadata pm ON pm.post_id = p.id
-	LEFT JOIN posts_likes pl ON p.id = pl.post_id
-	LEFT JOIN comments c ON p.id = c.post_id
-	GROUP BY p.id, u.id, p.description, p.link, u.name, u.image, pm.title, pm.description, pm.image_url
-    ORDER BY p.created_at DESC LIMIT 10 OFFSET $2
-    `,[id,offset]);
+	return db.query(
+		`
+			SELECT p.*, u.name AS user_name, u.image AS image_profile, COALESCE(COUNT(DISTINCT pl.id)) AS num_likes, COALESCE(COUNT(DISTINCT c.id)) AS num_comments,
+			pm.title AS title_metadata, pm.description AS description_metadata, pm.image_url AS image_metadata, u.id = $1 AS author_match
+			FROM posts p
+			JOIN followers f ON f.user_id = $1 AND f.following_id = p.user_id
+			JOIN users u ON u.id = p.user_id
+			JOIN posts_metadata pm ON pm.post_id = p.id
+			LEFT JOIN posts_likes pl ON p.id = pl.post_id
+			LEFT JOIN comments c ON p.id = c.post_id
+			GROUP BY p.id, u.id, p.description, p.link, u.name, u.image, pm.title, pm.description, pm.image_url
+			ORDER BY p.created_at DESC LIMIT 10 OFFSET $2
+		`,
+	[id,offset]);
 
 };
 

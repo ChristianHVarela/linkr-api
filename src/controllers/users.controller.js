@@ -14,8 +14,7 @@ export async function getUser(req, res) {
     const userPosts = await getUserPosts(id)
     const { rows:likes } = await getLikesByUser(id, user_id, page)
     const body = buildBody(userPosts.rows, likes)
-
-    const userPage = [[{...userData.rows[0], itsYou}], [...body]]
+    const userPage = [[{...userData.rows[0], itsYou}], [...body.body]]
 
     return res.send(userPage).status(200);
   } catch (error) {

@@ -3,6 +3,7 @@ import { deleteLike, deletePostById, getPostsOrderByCreatedAtDesc, insertLike, i
 import urlMetadata from 'url-metadata';
 import { insertMetada } from "../repositories/metadata.repository.js";
 import { getLikes } from "../repositories/likes.repository.js";
+import { countFollowers } from "../repositories/followers.repository.js";
 
 export const createPost = async (req, res) => {
     const { link, description } = req.body
@@ -31,10 +32,10 @@ export const getPosts = async (req, res) => {
         const page = query.page || 1;
         const postsResult = await getPostsOrderByCreatedAtDesc(userId,page)
         const { rows: likes } = await getLikes(userId)
-        if (postsResult.rowCount > 0)
-        {
+        const count = await countFollowers([userId])
+        if (postsResult.rowCount > 0) {
             posts = [...postsResult.rows]
-            body = buildBody(posts, likes)
+            body = buildBody(posts, likes, count.rows[0].count)
         }
     } catch (error) {
         console.log(error);
@@ -43,7 +44,7 @@ export const getPosts = async (req, res) => {
     return res.send(body);
 }
 
-export const buildBody = (post, likes) =>{
+export const buildBody = (post, likes, count) =>{
     const likesMap = new Map();
     likes.forEach((like) => likesMap.set(like.post_id, { likes: like.likes, liked_by_me: like.liked_by_me }));
     const body = [];
@@ -51,7 +52,8 @@ export const buildBody = (post, likes) =>{
         const like = likesMap.get(p.id) || { likes: [], liked_by_me:false };
         body.push({ ...p, ...like });
     });
-    return body;
+    const dto  = {countFollowers: count, body}
+    return dto;
 }
 
 export const deletePost = async (req, res) =>{
