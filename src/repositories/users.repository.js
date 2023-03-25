@@ -34,3 +34,17 @@ export function searchUsers(searchQuery) {
   );
 }
 
+export function newSearchUsers(searchQuery) {
+  return db.query(
+    `
+      SELECT u.id, u.name, u.image,
+        (SELECT COUNT(*) FROM followers fo WHERE fo.user_id = $1 AND fo.following_id = u.id) AS follows_me
+      FROM users u
+      LEFT JOIN followers f ON f.user_id = $1 AND f.following_id = u.id
+      WHERE TRANSLATE(CONCAT('%', LOWER(u.name), '%'), 'áàâãéèêíïóôõöúçñ', 'aaaaeeeiiooooucn') LIKE TRANSLATE(concat('%', LOWER($2), '%'), 'áàâãéèêíïóôõöúçñ', 'aaaaeeeiiooooucn') || '%'
+      ORDER BY f.following_id DESC NULLS LAST, u.name
+    `,
+    searchQuery
+  );
+}
+
